@@ -94,4 +94,33 @@ router.post(
   }
 );
 
+router.post(
+  '/bookedSlotTime',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Slots.find({ slot_date: req.body.slot_date }).then(slots => {
+      const defaultTime = [
+        '1AM-2AM',
+        '2AM-3AM',
+        '3AM-4AM',
+        '4AM-5AM',
+        '5AM-6AM',
+        '6AM-7AM',
+        '7AM-8AM',
+        '8AM-9AM'
+      ];
+      let reminedTime = [];
+      let bookedTime = [];
+
+      for (let key in slots) {
+        bookedTime[key] = slots[key].slot_time;
+      }
+
+      reminedTime = defaultTime.filter(val => !bookedTime.includes(val));
+
+      res.json(reminedTime);
+    });
+  }
+);
+
 module.exports = router;
